@@ -130,11 +130,11 @@ const ImageContainer = () =>{
 
 const Device = () =>{
     const location = useLocation();
-    const data = location.state.data;
+    const name = location.state.name;
     return(
         <React.Fragment>
-            <NavHead name = {data.name}></NavHead>
-            <SettingContainer name = {data.name}></SettingContainer>
+            <NavHead name = {name}></NavHead>
+            <SettingContainer name = {name}></SettingContainer>
         </React.Fragment>
     )
 

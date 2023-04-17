@@ -1,7 +1,8 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
+import React, { useEffect } from 'react';
 import './ProfileChoice.css';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import AddUser from '../AddUser/AddUser'
 
 const saveJson = (name,addresslist,valuelist) => {
 
@@ -72,10 +73,10 @@ const saveJson = (name,addresslist,valuelist) => {
   window.localStorage.setItem(name, userString);
 
   const checkuser = window.localStorage.getItem(name);
-  //console.log(""checkuser);
+  //console.log("checkuser");
 
   const userJson = JSON.parse(checkuser)
-  console.log("Json" ,userJson)
+  //console.log("Json" ,userJson)
 
 }
 
@@ -90,52 +91,93 @@ const NavHead = () =>{
   )
 }
 
+
+const closeModalEvent = () =>{
+  console.log('sss')
+}
+
 const Profiles = () =>{
-
-
-  //check
-  const names = []
-  for(let i = 0; i<window.localStorage.length;i++){
-    const name = window.localStorage.key(i)
-    names.push(name)
+  
+  // window.localStorage.clear()
+  
+  const keys = Object.keys(window.localStorage)
+  const [names,setNames] = useState(keys)
+  
+  const addName = (name) =>{
+    setNames([...names,name])
+  }
+  
+  const testf =()=>{
+    console.log("sss")
   }
 
-  names.reverse()
-
-  const profiles = names.map((v) => (<Profile name ={v}></Profile>))
-
+  const profiles = names.map(
+    (v) => (
+    <Link to ='/Device' key={v} state ={{name:v}} style={{ textDecoration: "none" }}>
+      <Profile  addName = {addName} name ={v}></Profile>
+    </Link>
+    )
+  )
+  
   return(
     <React.Fragment>
       <p id="teamName">Easy Do Track</p>
       <h2 id = "phrase"> 누가 사용하나요?</h2>
       <div className = "profiles">
         {profiles}
-        <Profile name = "empty"></Profile>
+        <Profile  addName = {addName} name = "empty"></Profile>
 
       </div>
     </React.Fragment>
   )
 }
+
+
 
 const Profile = (props) =>{
-  const data = {
-    name : props.name
-  };
 
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const showModal = () => {
+    setModalOpen(true);
+  };
+  
   return(
     <React.Fragment>
-      <div className='profile' >{
+      <div className='profile' onClick={()=>showModal()} >{
         props.name === "empty" 
-        ?  <h3 className="plusicon"><span uk-icon="icon: plus; ratio: 2"></span></h3>
-        :  <Link to ='/Device' state ={{data}}><h3 className='profiletitle'>{props.name}</h3></Link>
-
+        ?  <h3 className="plusicon">+</h3>
+        :  <h3 className='profiletitle'>{props.name}</h3>
       }
-        
       </div>
+      {
+        props.name === "empty" ? modalOpen && <AddUser addName = {props.addName} ssetModalOpen={setModalOpen}/> : null
+      }
     </React.Fragment>
   )
 }
 
+/*
+var ProfileChoice = () =>{
+
+  //확인용 data들 
+  //check saveJson method 사용법
+  const list = [20,20,20,20,20,44,20]
+  saveJson("이석희",list)
+
+  const list2 = [10,20,30,40,50,60,70]
+  saveJson("제로콜라",list2)
+  
+  saveJson("treesrt",'0')
+  return(
+    <React.Fragment>
+      <NavHead></NavHead>
+      <Profiles></Profiles>
+    </React.Fragment>
+  )
+}
+export default ProfileChoice;
+*/
 
 const ProfileChoice = () =>{
 
@@ -151,11 +193,6 @@ const ProfileChoice = () =>{
   if(window.localStorage.getItem('이석희')===null){
     saveJson("이석희",addresslist,list)
   }
-
-  if(window.localStorage.getItem('제로콜라')===null){
-    saveJson("제로콜라",addresslist2,list2)
-  }
-
   if(window.localStorage.getItem('treeset')===null){
     saveJson("treeset",'0','0')
   }
